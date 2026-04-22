@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: car-vault-frontend
+  namespace: car-vault
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: car-vault-frontend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0        # zero downtime rolling update
+  template:
+    metadata:
+      labels:
+        app: car-vault-frontend
+    spec:
+      containers:
+        - name: frontend
+          # Replace YOUR_ACCOUNT_ID with your AWS account ID
+          image: YOUR_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/car-vault/frontend:latest
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "25m"
+            limits:
+              memory: "64Mi"
+              cpu: "100m"

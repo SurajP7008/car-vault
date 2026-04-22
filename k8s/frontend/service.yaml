@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: car-vault
+spec:
+  selector:
+    app: car-vault-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer    # On EKS this provisions an AWS ALB — get URL with kubectl get svc
