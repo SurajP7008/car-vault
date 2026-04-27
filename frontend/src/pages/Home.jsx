@@ -23,11 +23,12 @@ const stats = [
 
 export default function Home() {
   const [featuredCars, setFeaturedCars] = useState([])
+  const [featuredError, setFeaturedError] = useState(false)
 
   useEffect(() => {
     fetchCars()
       .then(all => setFeaturedCars(all.filter(c => FEATURED_IDS.includes(c.id))))
-      .catch(() => {})
+      .catch(() => setFeaturedError(true))
   }, [])
 
   return (
@@ -80,11 +81,18 @@ export default function Home() {
             </div>
             <Link to="/cars" className={styles.viewAll}>View All →</Link>
           </div>
-          <div className={styles.featuredGrid}>
-            {featuredCars.map(car => (
-              <CarCard key={car.id} car={car} />
-            ))}
-          </div>
+          {featuredError ? (
+            <p style={{ color: '#e74c3c', textAlign: 'center', padding: '2rem' }}>
+              Could not load featured cars — make sure the backend is running:<br />
+              <code>cd backend &amp;&amp; npm run dev</code>
+            </p>
+          ) : (
+            <div className={styles.featuredGrid}>
+              {featuredCars.map(car => (
+                <CarCard key={car.id} car={car} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
